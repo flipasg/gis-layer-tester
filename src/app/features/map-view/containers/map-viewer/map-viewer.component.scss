@@ -1,0 +1,76 @@
+.map-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.title {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 380px) 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.config-card {
+  align-self: start;
+}
+
+.config-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.map-panel {
+  position: relative;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow:
+    0 20px 25px -15px rgba(0, 0, 0, 0.2),
+    0 12px 10px -10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-height: 480px;
+}
+
+.empty-state {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.map-instance {
+  display: block;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .config-card {
+    order: 2;
+  }
+
+  .map-panel {
+    order: 1;
+    min-height: 400px;
+  }
+}

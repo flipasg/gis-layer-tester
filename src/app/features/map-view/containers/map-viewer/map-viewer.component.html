@@ -1,0 +1,67 @@
+<div class="map-viewer">
+  <mat-toolbar color="primary">
+    <span class="title">GIS Layer Tester</span>
+    <span class="spacer"></span>
+    <mat-button-toggle-group
+      aria-label="Map engine selector"
+      [value]="selectedEngine()"
+      (valueChange)="onEngineChange($event)"
+    >
+      @for (option of engineOptions; track option.value) {
+        <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </mat-toolbar>
+
+  <div class="layout">
+    <mat-card appearance="outlined" class="config-card">
+      <mat-card-header>
+        <mat-card-title>Layer configuration</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="mapForm" class="config-form" autocomplete="off">
+          <mat-form-field appearance="outline">
+            <mat-label>WMS endpoint</mat-label>
+            <input matInput type="url" placeholder="https://example.com/geoserver/wms" formControlName="wmsUrl" />
+            <mat-hint>Use your local GeoServer endpoint.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Layer name</mat-label>
+            <input matInput placeholder="workspace:layerName" formControlName="layerName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Image format</mat-label>
+            <mat-select formControlName="format">
+              @for (format of formatOptions; track format) {
+                <mat-option [value]="format">{{ format }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-slide-toggle formControlName="transparent">Transparent tiles</mat-slide-toggle>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="map-panel" role="region" aria-live="polite">
+      @if (!canRenderMap()) {
+        <div class="empty-state">
+          <p>Provide both the WMS endpoint and layer name to render the preview.</p>
+        </div>
+      } @else {
+        <app-openlayers-map
+          *ngIf="selectedEngine() === 'openlayers'"
+          [config]="layerConfig()"
+          class="map-instance"
+        />
+        <app-cesium-map
+          *ngIf="selectedEngine() === 'cesium'"
+          [config]="layerConfig()"
+          class="map-instance"
+        />
+      }
+    </div>
+  </div>
+</div>
