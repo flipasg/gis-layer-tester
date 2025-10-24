@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -7,16 +8,15 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import Compass from '@cesium-extends/compass';
 import {
+  ImageryLayer,
+  OpenStreetMapImageryProvider,
   Viewer,
   WebMapServiceImageryProvider,
-  ImageryLayer,
-  OpenStreetMapImageryProvider
 } from 'cesium';
-import Compass from '@cesium-extends/compass';
 import { MapLayerConfig } from '../../../../core/models/map-layer-config';
 
 @Component({
@@ -25,11 +25,12 @@ import { MapLayerConfig } from '../../../../core/models/map-layer-config';
   imports: [CommonModule],
   templateUrl: './cesium-map.component.html',
   styleUrl: './cesium-map.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CesiumMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input({ required: true }) config!: MapLayerConfig;
-  @ViewChild('cesiumContainer', { static: true }) private readonly cesiumContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('cesiumContainer', { static: true })
+  private readonly cesiumContainer!: ElementRef<HTMLDivElement>;
 
   private viewer?: Viewer;
   private wmsLayer?: ImageryLayer;
@@ -37,9 +38,6 @@ export class CesiumMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit(): void {
     this.viewer = new Viewer(this.cesiumContainer.nativeElement, {
-      imageryProvider: new OpenStreetMapImageryProvider({
-        url: 'https://tile.openstreetmap.org/'
-      }),
       animation: false,
       timeline: false,
       baseLayerPicker: false,
@@ -47,8 +45,14 @@ export class CesiumMapComponent implements AfterViewInit, OnChanges, OnDestroy {
       navigationHelpButton: false,
       fullscreenButton: false,
       homeButton: true,
-      sceneModePicker: true
+      sceneModePicker: true,
     });
+
+    // Add the OpenStreetMap imagery provider after creating the viewer
+    const osmProvider = new OpenStreetMapImageryProvider({
+      url: 'https://tile.openstreetmap.org/',
+    });
+    this.viewer.imageryLayers.addImageryProvider(osmProvider);
 
     this.compass = new Compass(this.viewer);
 
@@ -80,14 +84,15 @@ export class CesiumMapComponent implements AfterViewInit, OnChanges, OnDestroy {
       parameters: {
         format: this.config.format,
         transparent: this.config.transparent,
-        tiled: true
-      }
+        tiled: true,
+      },
     });
 
     if (this.wmsLayer) {
       this.viewer.imageryLayers.remove(this.wmsLayer, true);
     }
 
-    this.wmsLayer = this.viewer.imageryLayers.addImageryProvider(imageryProvider);
+    this.wmsLayer =
+      this.viewer.imageryLayers.addImageryProvider(imageryProvider);
   }
 }

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -7,16 +8,15 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import Map from 'ol/Map';
 import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import TileWMS from 'ol/source/TileWMS';
-import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
 import { defaults as defaultControls } from 'ol/control/defaults';
+import TileLayer from 'ol/layer/Tile';
+import { fromLonLat } from 'ol/proj';
+import OSM from 'ol/source/OSM';
+import TileWMS from 'ol/source/TileWMS';
 import { MapLayerConfig } from '../../../../core/models/map-layer-config';
 
 @Component({
@@ -25,11 +25,14 @@ import { MapLayerConfig } from '../../../../core/models/map-layer-config';
   imports: [CommonModule],
   templateUrl: './openlayers-map.component.html',
   styleUrl: './openlayers-map.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OpenlayersMapComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class OpenlayersMapComponent
+  implements AfterViewInit, OnChanges, OnDestroy
+{
   @Input({ required: true }) config!: MapLayerConfig;
-  @ViewChild('mapContainer', { static: true }) private readonly mapContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('mapContainer', { static: true })
+  private readonly mapContainer!: ElementRef<HTMLDivElement>;
 
   private map?: Map;
   private wmsLayer?: TileLayer<TileWMS>;
@@ -53,7 +56,7 @@ export class OpenlayersMapComponent implements AfterViewInit, OnChanges, OnDestr
       return;
     }
 
-    const layers = [new TileLayer({ source: new OSM() })];
+    const layers: TileLayer<any>[] = [new TileLayer({ source: new OSM() })];
 
     if (this.config.layerName && this.config.wmsUrl) {
       this.wmsLayer = this.createWmsLayer();
@@ -66,8 +69,8 @@ export class OpenlayersMapComponent implements AfterViewInit, OnChanges, OnDestr
       controls: defaultControls(),
       view: new View({
         center: fromLonLat([0, 0]),
-        zoom: 2
-      })
+        zoom: 2,
+      }),
     });
   }
 
@@ -77,8 +80,8 @@ export class OpenlayersMapComponent implements AfterViewInit, OnChanges, OnDestr
       source: new TileWMS({
         url: this.config.wmsUrl,
         params: this.buildWmsParams(),
-        transition: 0
-      })
+        transition: 0,
+      }),
     });
   }
 
@@ -117,7 +120,7 @@ export class OpenlayersMapComponent implements AfterViewInit, OnChanges, OnDestr
       FORMAT: this.config.format,
       TRANSPARENT: this.config.transparent,
       TILED: true,
-      STYLES: ''
+      STYLES: '',
     };
   }
 }
